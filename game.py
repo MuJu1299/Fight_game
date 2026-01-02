@@ -1,17 +1,21 @@
 import pygame
 import sys
 from config import *
+from player import Play
 
 class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
+        self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption("Fight_Game")
         self.clock = pygame.time.Clock()
         self.running = True
         # 切换状态
         self.states = {}
         self.current_states = None
+        # 创建玩家游戏实例
+        self.player = Play(self.screen_rect.centerx,self.screen_rect.centery)
 
     def run_game(self):
         '''开始游戏主循环'''
@@ -23,7 +27,8 @@ class Game:
 
     def _render(self):
         '''渲染画面'''
-        self.screen.fill(bg_color)
+        self.screen.fill(BG_COLOR)
+        self.screen.blit(self.player.image,self.player.rect)
         pass
         pygame.display.flip()
     
@@ -32,17 +37,28 @@ class Game:
         pass
 
     def _handle_events(self):
-        '''监听按键操作'''
+        '''处理输入事件'''
+        self._handle_player_input()
+        self._handle_quit_events()
+
+    def _handle_quit_events(self):
+        '''处理退出事件'''
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     self.running = False
+    
+    def _handle_player_input(self):
+        '''处理外加输出'''
+        keys = pygame.key.get_pressed()
+        self.player.update(keys)
 
     def quit_game(self):
         '''退出游戏'''
         self.running = False
+        pygame.quit()
         sys.exit()
         
 
