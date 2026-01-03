@@ -7,9 +7,9 @@ class Play(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((32,32))
         self.image.fill((100,100,100))
-        # 碰撞箱
         self.rect = self.image.get_rect(center=(x,y))
-        self.hitbox = pygame.Rect(0,0,30,30)
+        # 碰撞箱
+        self.hitbox = pygame.Rect(0,0,*PLAYER_HITBOX_SIZE)
         self.hitbox.center = self.rect.center
         # 玩家属性
         self.speed = PLAYER_SPEED

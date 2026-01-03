@@ -2,6 +2,7 @@ import pygame
 import sys
 from config import *
 from player import Play
+from enemy import Enemy
 
 class Game:
     def __init__(self):
@@ -16,6 +17,8 @@ class Game:
         self.current_states = None
         # 创建玩家游戏实例
         self.player = Play(self.screen_rect.centerx,self.screen_rect.centery)
+        # 创建敌人实例
+        self.enemy = Enemy(self.screen_rect.centerx,self.screen_rect.centery)
 
     def run_game(self):
         '''开始游戏主循环'''
@@ -29,11 +32,12 @@ class Game:
         '''渲染画面'''
         self.screen.fill(BG_COLOR)
         self.screen.blit(self.player.image,self.player.rect)
-        pass
+        self.screen.blit(self.enemy.image,self.enemy.rect)
         pygame.display.flip()
     
     def _update(self):
         '''更新游戏逻辑'''
+        self.enemy.update(self.player)
         pass
 
     def _handle_events(self):
