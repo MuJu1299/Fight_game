@@ -9,13 +9,35 @@ class Enemy(pygame.sprite.Sprite):
         if self.type == "basic":
             # 创建敌人图形
             self.image = pygame.Surface((32,32))
-            self.image.fill(ENEMY_COLOR)
+            self.image.fill(BASIC_ENEMY_COLOR)
             self.rect = self.image.get_rect(center=(x,y))
             # 碰撞箱
             self.hitbox = pygame.Rect(0,0,20,20)
             self.hitbox.center = self.rect.center
             # 设置敌人基本数值
-            self.speed = 5
+            self.speed = 2
+        # 快速敌人
+        elif self.type == "fast":
+            # 创建敌人图形
+            self.image = pygame.Surface((22,22))
+            self.image.fill(FAST_ENEMY_COLOR)
+            self.rect = self.image.get_rect(center=(x,y))
+            # 碰撞箱
+            self.hitbox = pygame.Rect(0,0,15,15)
+            self.hitbox.center = self.rect.center
+            # 设置敌人基本数值
+            self.speed = 3
+        # 慢速敌人
+        elif self.type == "slow":
+            # 创建敌人图形
+            self.image = pygame.Surface((42,42))
+            self.image.fill(SLOW_ENEMY_COLOR)
+            self.rect = self.image.get_rect(center=(x,y))
+            # 碰撞箱
+            self.hitbox = pygame.Rect(0,0,30,30)
+            self.hitbox.center = self.rect.center
+            # 设置敌人基本数值
+            self.speed = 1
     
     def update(self,player):
         '''朝玩家移动的AI'''
@@ -24,7 +46,6 @@ class Enemy(pygame.sprite.Sprite):
         # 两点间的向量及两点间的距离
         direction =player_pos - enemy_pos
         distance = direction.length()
-
         if distance > 0:
             direction = direction.normalize()
             self.rect.x += direction.x * self.speed
