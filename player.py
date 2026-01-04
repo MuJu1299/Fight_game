@@ -14,9 +14,19 @@ class Play(pygame.sprite.Sprite):
         # 玩家属性
         self.speed = PLAYER_SPEED
         self.attack_range = 60
+        self.ATK = 40
+        self.cooldown = 1000
+        self.last_attack_time = 0
+        self.attack_colldown = 0
+        
 
     def update(self,key_pressed):
-        '''控制移动'''
+        '''更新玩家数据'''
+        # # 冷却时间更新
+        # current_time = pygame.time.get_ticks()
+        # elapsed_time = current_time - self.last_attack_time
+        # self.attack_colldown = max(0,self.cooldown - elapsed_time)
+        # '''控制移动'''
         self.direction = pygame.Vector2(0,0)
         if key_pressed[pygame.K_w]:
             self.direction.y = -1
@@ -48,3 +58,25 @@ class Play(pygame.sprite.Sprite):
         # 绘制玩家
         screen.blit(self.image,(self.rect.x-camera_offset[0]
                                 ,self.rect.y -camera_offset[1]))
+        
+    def attack(self,enemier):
+        '''敌人靠近到攻击范围则攻击'''
+        # 控制冷却
+        current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - self.last_attack_time
+        remaining_cooldown = max(0,self.cooldown - elapsed_time)
+
+        if remaining_cooldown > 0:
+            return False
+        
+        attacked = False
+        for enemy in enemier:
+            distance = pygame.Vector2(enemy.rect.center).distance_to(self.rect.center)
+            if distance < self.attack_range:
+                enemy.take_damage(self.ATK)
+                print("attack!")
+                attacked = True
+        if attacked:
+            self.attack_colldown = self.cooldown
+            self.last_attack_time = current_time
+        return attacked

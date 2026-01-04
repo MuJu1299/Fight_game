@@ -27,7 +27,7 @@ class Game:
         # 相机偏移
         self.camera_offset = [0,0]
          # 创建敌人实例
-        self.spawn_enemies(3)
+        self.spawn_enemies(1)
 
     def run_game(self):
         '''开始游戏主循环'''
@@ -44,6 +44,7 @@ class Game:
             if hasattr(sprite,'draw'):
                 sprite.draw(self.screen,self.camera_offset)
             else:
+                # sprite.rect.x是世界坐标，如果删除self.camera_offset，敌人会跟随世界坐标移动，但player的坐标会被self.camera_offset抵消为0，造成屏幕中player不变，而敌人跟着增大的世界坐标变化
                 self.screen.blit(sprite.image,(sprite.rect.x - self.camera_offset[0],
                                  sprite.rect.y - self.camera_offset[1]))
         pygame.display.flip()
@@ -62,6 +63,7 @@ class Game:
     def _update(self):
         '''更新游戏逻辑'''
         self.enemies.update(self.player)
+        self.player.attack(self.enemies)
         self._update_camera()
         pass
 

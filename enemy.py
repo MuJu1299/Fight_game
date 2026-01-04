@@ -16,6 +16,7 @@ class Enemy(pygame.sprite.Sprite):
             self.hitbox.center = self.rect.center
             # 设置敌人基本数值
             self.speed = 2
+            self.health = 100
         # 快速敌人
         elif self.type == "fast":
             # 创建敌人图形
@@ -27,6 +28,7 @@ class Enemy(pygame.sprite.Sprite):
             self.hitbox.center = self.rect.center
             # 设置敌人基本数值
             self.speed = 3
+            self.health = 40
         # 慢速敌人
         elif self.type == "slow":
             # 创建敌人图形
@@ -38,6 +40,7 @@ class Enemy(pygame.sprite.Sprite):
             self.hitbox.center = self.rect.center
             # 设置敌人基本数值
             self.speed = 1
+            self.health = 150
     
     def update(self,player):
         '''朝玩家移动的AI'''
@@ -52,5 +55,13 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.x += direction.x * self.speed
                 self.rect.y += direction.y * self.speed
                 self.hitbox.center = self.rect.center
+        
+
+    
+    def take_damage(self,damage):
+        '''接受损伤值在health小于零敌人死亡'''
+        self.health -= damage
+        if self.health <= 0:
+            self.kill()
 
         
