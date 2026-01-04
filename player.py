@@ -13,11 +13,12 @@ class Play(pygame.sprite.Sprite):
         self.hitbox.center = self.rect.center
         # 玩家属性
         self.speed = PLAYER_SPEED
-        self.attack_range = 60
-        self.ATK = 40
-        self.cooldown = 1000
+        self.attack_range = ATTACK_RANGE
+        self.ATK = ATK
+        self.cooldown = ATTACK_COOLDOWN
         self.last_attack_time = 0
-        self.attack_colldown = 0
+        self.health = 100
+        # self.attack_colldown = 0
         
 
     def update(self,key_pressed):
@@ -51,7 +52,7 @@ class Play(pygame.sprite.Sprite):
         # 创建半透明圆
         range_Surface = pygame.Surface((self.attack_range*2,self.attack_range*2)
                                        ,pygame.SRCALPHA)
-        pygame.draw.circle(range_Surface,(230,0,0,120),(self.attack_range,self.attack_range),self.attack_range)
+        pygame.draw.circle(range_Surface,(230,0,0,0),(self.attack_range,self.attack_range),self.attack_range)
 
         screen.blit(range_Surface,(self.rect.x-camera_offset[0]-self.attack_range+self.rect.width/2
                                 ,self.rect.y -camera_offset[1]-self.attack_range+self.rect.height/2))
@@ -59,6 +60,12 @@ class Play(pygame.sprite.Sprite):
         screen.blit(self.image,(self.rect.x-camera_offset[0]
                                 ,self.rect.y -camera_offset[1]))
         
+    def damage(self,damage):
+        '''受击'''
+        self.health -= damage
+        if self.health <= 0:
+            self.kill()
+
     def attack(self,enemier):
         '''敌人靠近到攻击范围则攻击'''
         # 控制冷却

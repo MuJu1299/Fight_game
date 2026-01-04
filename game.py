@@ -27,15 +27,16 @@ class Game:
         # 相机偏移
         self.camera_offset = [0,0]
          # 创建敌人实例
-        self.spawn_enemies(1)
+        self.spawn_enemies(5)
 
     def run_game(self):
         '''开始游戏主循环'''
         while self.running:
+            dt = self.clock.tick(FPS)
             self._handle_events()
-            self._update()
+            self._update(dt)
             self._render()
-            self.clock.tick(FPS)
+            
 
     def _render(self):
         '''渲染画面'''
@@ -60,9 +61,9 @@ class Game:
             self.all_sprites.add(new_enemy)
             self.enemies.add(new_enemy)
     
-    def _update(self):
+    def _update(self,dt):
         '''更新游戏逻辑'''
-        self.enemies.update(self.player)
+        self.enemies.update(self.player,dt)
         self.player.attack(self.enemies)
         self._update_camera()
         pass
