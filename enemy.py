@@ -47,9 +47,10 @@ class Enemy(pygame.sprite.Sprite):
         direction =player_pos - enemy_pos
         distance = direction.length()
         if distance > 0:
-            direction = direction.normalize()
-            self.rect.x += direction.x * self.speed
-            self.rect.y += direction.y * self.speed
-            self.hitbox.center = self.rect.center
+            if distance > 40:
+                direction = direction.normalize()
+                self.rect.x += direction.x * self.speed
+                self.rect.y += direction.y * self.speed
+                self.hitbox.center = self.rect.center
 
         

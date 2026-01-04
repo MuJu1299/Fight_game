@@ -8,7 +8,7 @@ import random
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT),pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
         self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption("Fight_Game")
         self.clock = pygame.time.Clock()
@@ -25,9 +25,9 @@ class Game:
         self.player.add(self.players)
         self.player.add(self.all_sprites)
         # 相机偏移
-        self.camera_offset = (0, 0)
+        self.camera_offset = [0,0]
          # 创建敌人实例
-        self.spawn_enemies(5)
+        self.spawn_enemies(3)
 
     def run_game(self):
         '''开始游戏主循环'''
@@ -44,8 +44,8 @@ class Game:
             if hasattr(sprite,'draw'):
                 sprite.draw(self.screen,self.camera_offset)
             else:
-                self.screen.blit(sprite.image,sprite.rect
-                                 )
+                self.screen.blit(sprite.image,(sprite.rect.x - self.camera_offset[0],
+                                 sprite.rect.y - self.camera_offset[1]))
         pygame.display.flip()
 
     def spawn_enemies(self,count):
@@ -62,7 +62,14 @@ class Game:
     def _update(self):
         '''更新游戏逻辑'''
         self.enemies.update(self.player)
+        self._update_camera()
         pass
+
+    def _update_camera(self):
+        '''更新相机位置，跟随玩家'''
+        # 简单的相机跟随：让玩家始终在屏幕中央
+        self.camera_offset[0] = self.player.rect.centerx - SCREEN_WIDTH // 2
+        self.camera_offset[1] = self.player.rect.centery - SCREEN_HEIGHT // 2
 
     def _handle_events(self):
         '''处理输入事件'''
