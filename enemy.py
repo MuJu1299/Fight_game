@@ -12,7 +12,7 @@ class Enemy(pygame.sprite.Sprite):
             self.image.fill(BASIC_ENEMY_COLOR)
             self.rect = self.image.get_rect(center=(x,y))
             # 碰撞箱
-            self.hitbox = pygame.Rect(0,0,20,20)
+            self.hitbox = pygame.Rect(0,0,*BASIC_ENEMY_COLLISION)
             self.hitbox.center = self.rect.center
             # 设置敌人基本数值
             self.speed = 2
@@ -26,7 +26,7 @@ class Enemy(pygame.sprite.Sprite):
             self.image.fill(FAST_ENEMY_COLOR)
             self.rect = self.image.get_rect(center=(x,y))
             # 碰撞箱
-            self.hitbox = pygame.Rect(0,0,15,15)
+            self.hitbox = pygame.Rect(0,0,*FAST_ENEMY_COLLISION)
             self.hitbox.center = self.rect.center
             # 设置敌人基本数值
             self.speed = 3
@@ -40,7 +40,7 @@ class Enemy(pygame.sprite.Sprite):
             self.image.fill(SLOW_ENEMY_COLOR)
             self.rect = self.image.get_rect(center=(x,y))
             # 碰撞箱
-            self.hitbox = pygame.Rect(0,0,30,30)
+            self.hitbox = pygame.Rect(0,0,*SLOW_ENEMY_COLLISION)
             self.hitbox.center = self.rect.center
             # 设置敌人基本数值
             self.speed = 1
@@ -48,7 +48,7 @@ class Enemy(pygame.sprite.Sprite):
             self.damage = 4
             self.cooldown = 3000
         # 共用状态
-        self.attack_cooldown = 0
+        self.attack_cooldown = self.cooldown
         self.attack_warning = 0
         self.attack_range = 60
     
@@ -61,7 +61,8 @@ class Enemy(pygame.sprite.Sprite):
         distance = direction.length()
         if distance > 0:
             direction = direction.normalize()
-            if distance > self.attack_range + 20:
+            self.direction = direction
+            if distance > self.attack_range + 20 and self.attack_cooldown >= self.cooldown - 200:
                 self.rect.x += direction.x * self.speed
                 self.rect.y += direction.y * self.speed
                 self.hitbox.center = self.rect.center
@@ -75,6 +76,7 @@ class Enemy(pygame.sprite.Sprite):
                         self.attack(player)
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
+        # print(self.attack_cooldown)
 
     def attack(self,player):
         '''敌人攻击'''
@@ -83,7 +85,8 @@ class Enemy(pygame.sprite.Sprite):
         distance = pygame.Vector2(self.rect.center).distance_to(player.rect.center)
         if distance <= self.attack_range:
             player.damage(self.damage)
-            print("enemy_attack!")
+            # print("enemy_attack!")
+        if self.attack_warning >= 1000:
             self.attack_cooldown = self.cooldown
             self.attack_warning = 0
         
@@ -112,4 +115,4 @@ class Enemy(pygame.sprite.Sprite):
             screen.blit(range_Surface,(pos[0]-self.attack_range, 
                                        pos[1]-self.attack_range))
 
-        
+    

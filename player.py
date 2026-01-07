@@ -18,7 +18,8 @@ class Play(pygame.sprite.Sprite):
         self.cooldown = ATTACK_COOLDOWN
         self.last_attack_time = 0
         self.health = 100
-        # self.attack_colldown = 0
+        self.max_health = 100
+        # self.attack_cooldown = 0
         
 
     def update(self,key_pressed):
@@ -59,7 +60,34 @@ class Play(pygame.sprite.Sprite):
         # 绘制玩家
         screen.blit(self.image,(self.rect.x-camera_offset[0]
                                 ,self.rect.y -camera_offset[1]))
+        # 绘制生命条
+        self.draw_health_bar(screen)
+
+    def draw_health_bar(self,screen):
+        '''绘制player的生命条'''
+        bar_width = 400
+        bar_height = 6
+        bar_x = screen.get_rect().centerx - bar_width//2
+        bar_y =screen.get_rect().centery*1.8 -bar_height//2 
+
+        # 创建血条背景
+        bg_rect = pygame.Rect(bar_x,bar_y,bar_width,bar_height)
+        pygame.draw.rect(screen,(255,0,0),bg_rect)
         
+        # 创建血条
+        health_rect = pygame.Rect(bar_x,bar_y,int((self.health/self.max_health)*bar_width),bar_height)
+        pygame.draw.rect(screen,(0,255,0),health_rect)
+
+        # 创建边框
+        pygame.draw.rect(screen, (0, 0, 0), bg_rect, 1)
+
+        # 创建数字血量显示
+        font = pygame.font.Font(None,16)
+        health_text = font.render(f"HP: {self.health}/{self.max_health}",True,(0,0,0))
+        text_rect = health_text.get_rect(center=(bg_rect.centerx,bar_y - 15))
+        screen.blit(health_text, text_rect)
+
+
     def damage(self,damage):
         '''受击'''
         self.health -= damage
@@ -81,7 +109,7 @@ class Play(pygame.sprite.Sprite):
             distance = pygame.Vector2(enemy.rect.center).distance_to(self.rect.center)
             if distance < self.attack_range:
                 enemy.take_damage(self.ATK)
-                print("attack!")
+                # print("attack!")
                 attacked = True
         if attacked:
             self.attack_colldown = self.cooldown

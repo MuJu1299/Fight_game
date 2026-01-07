@@ -3,6 +3,7 @@ import sys
 from config import *
 from player import Play
 from enemy import Enemy
+from collision import Collision
 import random
 
 class Game:
@@ -28,6 +29,8 @@ class Game:
         self.camera_offset = [0,0]
          # 创建敌人实例
         self.spawn_enemies(5)
+        # 创建碰撞实例
+        self.collision = Collision(self)
 
     def run_game(self):
         '''开始游戏主循环'''
@@ -64,6 +67,7 @@ class Game:
     def _update(self,dt):
         '''更新游戏逻辑'''
         self.enemies.update(self.player,dt)
+        self.collision.update()
         self.player.attack(self.enemies)
         self._update_camera()
         pass
