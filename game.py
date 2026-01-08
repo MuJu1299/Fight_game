@@ -66,7 +66,7 @@ class Game:
     
     def _update(self,dt):
         '''更新游戏逻辑'''
-        self.enemies.update(self.player,dt)
+        self.enemies.update(self.player,self.enemies,dt)
         self.collision.update()
         self.player.attack(self.enemies)
         self._update_camera()

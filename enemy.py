@@ -51,32 +51,55 @@ class Enemy(pygame.sprite.Sprite):
         self.attack_cooldown = self.cooldown
         self.attack_warning = 0
         self.attack_range = 60
+        # 初始化加速度与力
+        self.velocity = pygame.Vector2(0,0)
+        self.repulsion_strength = 1000
+
     
-    def update(self,player,dt):
+    def update(self,player,enemies,dt):
         '''朝玩家移动的AI'''
-        player_pos = pygame.Vector2(player.rect.center)
-        enemy_pos = pygame.Vector2(self.rect.center)
-        # 两点间的向量及两点间的距离
-        direction =player_pos - enemy_pos
-        distance = direction.length()
-        if distance > 0:
-            direction = direction.normalize()
-            self.direction = direction
-            if distance > self.attack_range + 20 and self.attack_cooldown >= self.cooldown - 200:
-                self.rect.x += direction.x * self.speed
-                self.rect.y += direction.y * self.speed
-                self.hitbox.center = self.rect.center
-                self.attack_warning = 0
-                self.attack_cooldown = self.cooldown
-            else:
-                if self.attack_cooldown < 1000:
-                    if self.attack_warning < 1000 :
-                        self.attack_warning += dt
-                    else:
-                        self.attack(player)
+        # 重置加速度
+        acceleration = pygame.Vector2(0, 0)
+        # 朝玩家移动的力
+        distance_to_player = pygame.Vector2(player.hitbox.center) - pygame.Vector2(self.rect.center)
+        if distance_to_player.length() > 100:
+            acceleration += distance_to_player.normalize() * self.speed
+
+        # 敌人与敌人之间的碰撞
+        for enemy in enemies:
+            if enemy != self:
+                enemies_direction = pygame.Vector2(self.rect.center) - pygame.Vector2(enemy.rect.center)
+                enemies_distance = enemies_direction.length()
+                
+                if enemies_distance < self.hitbox.width and enemies_distance > 0:
+                    force = self.repulsion_strength/(enemies_distance * enemies_distance)
+                    acceleration += enemies_direction.normalize() * force
+                    
+
+        self.velocity += acceleration 
+        self.velocity *= 0.1
+        
+
+        if self.velocity.length() > 10:
+            self.velocity = self.velocity.normalize() * 10
+            
+        if self.attack_warning <= 0 :
+            self.rect.x += self.velocity.x * dt
+            self.rect.y += self.velocity.y * dt
+            self.hitbox.center = self.rect.center
+            
+
         if self.attack_cooldown > 0:
             self.attack_cooldown -= dt
-        # print(self.attack_cooldown)
+        else:
+            self.attack_warning += dt
+            if self.attack_warning >= 1000:
+                self.attack(player)
+                self.attack_cooldown =self.cooldown
+                self.attack_warning = 0
+
+            
+
 
     def attack(self,player):
         '''敌人攻击'''
@@ -85,7 +108,7 @@ class Enemy(pygame.sprite.Sprite):
         distance = pygame.Vector2(self.rect.center).distance_to(player.rect.center)
         if distance <= self.attack_range:
             player.damage(self.damage)
-            # print("enemy_attack!")
+            print("enemy_attack!")
         if self.attack_warning >= 1000:
             self.attack_cooldown = self.cooldown
             self.attack_warning = 0
@@ -114,5 +137,6 @@ class Enemy(pygame.sprite.Sprite):
                             ,self.attack_range)
             screen.blit(range_Surface,(pos[0]-self.attack_range, 
                                        pos[1]-self.attack_range))
+    
 
     

@@ -19,7 +19,7 @@ class Play(pygame.sprite.Sprite):
         self.last_attack_time = 0
         self.health = 100
         self.max_health = 100
-        # self.attack_cooldown = 0
+        self.attack_cooldown = 0
         
 
     def update(self,key_pressed):
@@ -27,7 +27,7 @@ class Play(pygame.sprite.Sprite):
         # # 冷却时间更新
         # current_time = pygame.time.get_ticks()
         # elapsed_time = current_time - self.last_attack_time
-        # self.attack_colldown = max(0,self.cooldown - elapsed_time)
+        # self.attack_cooldown = max(0,self.cooldown - elapsed_time)
         # '''控制移动'''
         self.direction = pygame.Vector2(0,0)
         if key_pressed[pygame.K_w]:
@@ -112,6 +112,6 @@ class Play(pygame.sprite.Sprite):
                 # print("attack!")
                 attacked = True
         if attacked:
-            self.attack_colldown = self.cooldown
+            self.attack_cooldown = self.cooldown
             self.last_attack_time = current_time
         return attacked

@@ -17,8 +17,9 @@ class Collision:
             if self.game.player.hitbox.colliderect(enemy.hitbox):
                 self.push_apart(self.game.player, enemy)
 
+
     def push_apart(self,entity1,entity2,max_iterations = 5):
-        '''推开敌人'''
+        '''推开两个实体'''
         iterations = 0
         # 计算移动方向的影响
         entity1_moving_towards = self.is_moving_towards(entity1, entity2)
